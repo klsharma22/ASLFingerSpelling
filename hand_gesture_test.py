@@ -30,7 +30,7 @@ while cap.isOpened():
 
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
-    results = landmarker.detect_for_video(mp_image, time.time.now())
+    results = landmarker.detect_async(mp_image, int(time.time()))
 
 
     cv2.imshow('Hand Tracking', frame)
