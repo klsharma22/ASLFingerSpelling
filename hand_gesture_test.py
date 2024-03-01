@@ -16,8 +16,8 @@ def print_result(result: HandLandmarkerResult, output_image: mp.Image, timestamp
 options = HandLandmarkerOptions(
     base_options=BaseOptions(model_asset_path='/Users/klsharma22/Desktop/ASLFingerSpelling/hand_landmarker.task'),
     running_mode=VisionRunningMode.LIVE_STREAM,
-    num_hands=1,
-    min_hand_detection_confidence=0.5,
+    num_hands=2,
+    min_hand_detection_confidence=0.8,
     min_hand_presence_confidence=0.5,
     min_tracking_confidence=0.5,
     result_callback=print_result
@@ -25,13 +25,16 @@ options = HandLandmarkerOptions(
 
 cap = cv2.VideoCapture(0)
 landmarker = HandLandmarker.create_from_options(options)
+hand_landmarks = []
 while cap.isOpened():
+    time_ms = int(round(time.time() * 1000))
     ret, frame = cap.read()
 
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
-    results = landmarker.detect_async(mp_image, int(time.time()))
-
+    results = landmarker.detect_async(mp_image, time_ms)
+    hand_landmarks.append(results)
+    print(results)
 
     cv2.imshow('Hand Tracking', frame)
 
@@ -40,3 +43,5 @@ while cap.isOpened():
 
 cap.release()
 cv2.destroyAllWindows()
+
+print(hand_landmarks[0])
