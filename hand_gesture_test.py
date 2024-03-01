@@ -1,26 +1,31 @@
 import mediapipe as mp
 import cv2
 import numpy as np
-import uuid
-import os
 
-mp_drawing = mp.solutions.drawing_utils
-mp_hands = mp.solutions.hands
+BaseOptions = mp.tasks.BaseOptions
+HandLandmarker = mp.tasks.vision.HandLandmarker
+HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
+HandLandmarkerResult = mp.tasks.vision.HandLandmarkerResult
+VisionRunningMode = mp.tasks.vision.RunningMode
+
+# Create a hand landmarker instance with the live stream mode:
+def print_result(result: HandLandmarkerResult, output_image: mp.Image):
+    print('hand landmarker result: {}'.format(result))
+
+options = HandLandmarkerOptions(
+    base_options=BaseOptions(model_asset_path='/Users/klsharma22/Desktop/ASLFingerSpelling/hand_landmarker.task'),
+    running_mode=VisionRunningMode.LIVE_STREAM,
+    result_callback=print_result)
 
 cap = cv2.VideoCapture(0)
-
-with mp_hands.Hands(min_detection_confidence= 0.8, min_tracking_confidence= 0.5) as hands:
+with HandLandmarker.create_from_options(options) as landmarker:
     while cap.isOpened():
         ret, frame = cap.read()
 
-        # Detection
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) # Converting BGR to RGB
-        image.flags.writeable = False # Setting flag to not render anythin on the image
-        results = hands.process(image) # Detecting hand in the image
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
 
-        image.flags.writeable = True # Setting the flag to write on the imgae
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        print(results)
+        results = landmarker.detect_async(mp_image)
+
 
         cv2.imshow('Hand Tracking', frame)
 
