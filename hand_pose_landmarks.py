@@ -5,7 +5,7 @@ mp_drawings = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 mp_pose = mp.solutions.pose
 
-hands = mp_hands.Hands(min_detection_confidence= 0.8, min_tracking_confidence= 0.5, max_num_hands= 2)
+hands = mp_hands.Hands(static_image_mode= False, min_detection_confidence= 0.8, min_tracking_confidence= 0.5, max_num_hands= 2)
 pose = mp_pose.Pose(min_detection_confidence= 0.8, min_tracking_confidence= 0.5)
 
 cap = cv2.VideoCapture(0)
